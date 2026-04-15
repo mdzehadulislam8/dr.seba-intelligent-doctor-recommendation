@@ -863,15 +863,7 @@ Carefully selected modern technologies for production reliability and performanc
 **Nusrat Jahan** — Senior Data Science Mentor & Project Lead
 - 📧 [nusrat.adiba@gmail.com](mailto:nusrat.adiba@gmail.com)
 - 🔗 [GitHub Profile](https://github.com/Nusrat-96)
-- 📍 Lead Trainer - Data Science & ML
-
-**Mentor's Contributions:**
-- ✅ Project conceptualization and healthcare ML strategy
-- ✅ Comprehensive model comparison & selection methodology
-- ✅ Data science best practices and code architecture
-- ✅ Quality assurance and production readiness assessment
-- ✅ API design and documentation standards
-- ✅ Practical deployment and testing guidance
+- 📍 Lead Trainer - Data Science Team
 
 ### Project Context
 
@@ -1049,4 +1041,3 @@ This project was developed as part of professional data science training with me
 
 **Made with ❤️ by the Dr.Seba Development Team**  
 📅 *Last Updated: April 2026*  
-🔄 *Current Status: Production Ready*
