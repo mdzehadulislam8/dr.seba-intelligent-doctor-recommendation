@@ -85,8 +85,18 @@
                             <span>🔍 Search Doctors</span>
                         </button>
 
-                        {% if doctors|length > 4 %}
-                        <button id="seeMoreBtn" type="button" class="see-more-btn see-more-input-btn">See more</button>
+                        {% if show_see_more_btn %}
+                        <form method="post" class="see-more-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="district" value="{{ selected_district }}">
+                            <input type="hidden" name="thana" value="{{ selected_thana }}">
+                            <input type="hidden" name="specialization" value="{{ selected_spec }}">
+                            <input type="hidden" name="maxFee" value="{{ max_fee }}">
+                            <input type="hidden" name="online" value="{% if online %}on{% endif %}">
+                            <input type="hidden" name="emergency" value="{% if emergency %}on{% endif %}">
+                            <input type="hidden" name="show_all" value="true">
+                            <button type="submit" class="see-more-btn see-more-input-btn">See more</button>
+                        </form>
                         {% endif %}
 
                         <div id="apiStatus" class="api-status">
@@ -127,12 +137,12 @@
                 <section id="resultsSection" class="results-section {% if doctors %}{% else %}hidden{% endif %}">
                     <div class="results-header">
                         <h2>
-                            <span id="resultCount">{{ doctors|length }}</span> Doctors Found
+                            <span id="resultCount">{{ displayed_doctors|length }}</span> Doctors Found
                         </h2>
                         <p>Ranked by AI Quality Score</p>
                     </div>
                     <div id="results" class="results-container">
-                        {% for doctor in doctors %}
+                        {% for doctor in displayed_doctors %}
                         <div class="doctor-card">
                             <div class="doctor-rank">
                                 <div class="rank-badge">#{{ forloop.counter }}</div>
@@ -199,29 +209,6 @@
         <p>🏥 Doctor Recommendation System powered by AI | Backend: <code>Django</code></p>
     </footer>
 
-    <script>
-        (function () {
-            var cards = Array.prototype.slice.call(document.querySelectorAll('.results-container .doctor-card'));
-            var seeMoreBtn = document.getElementById('seeMoreBtn');
-            var initialVisible = 4;
-
-            if (!cards.length || !seeMoreBtn) {
-                return;
-            }
-
-            cards.forEach(function (card, index) {
-                if (index >= initialVisible) {
-                    card.classList.add('doctor-card-hidden');
-                }
-            });
-
-            seeMoreBtn.addEventListener('click', function () {
-                cards.forEach(function (card) {
-                    card.classList.remove('doctor-card-hidden');
-                });
-                seeMoreBtn.classList.add('hidden');
-            });
-        })();
-    </script>
+    <!-- No JavaScript needed - All logic handled by Django backend -->
 </body>
 </html>

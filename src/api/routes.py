@@ -9,7 +9,6 @@ urlpatterns = [
     # HTML pages
     path('', handlers.home, name='home'),
     path('style.css', handlers.style_css, name='style-css'),
-    path('script.js', handlers.script_js, name='script-js'),
     
     # API endpoints
     path('api', handlers.api_root, name='api-root'),

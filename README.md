@@ -223,7 +223,8 @@ drseba-doctor-recommendation/                          # Root project directory
 **`templates/`** — User Interface
 - Server-side rendered HTML (Django templates)
 - Clean, responsive design for desktop & mobile
-- No external JavaScript framework (lightweight frontendp)
+- **Zero external JavaScript** — All pagination & logic handled by Django backend
+- CSRF token protection on all forms
 
 ---
 
@@ -287,6 +288,8 @@ python manage.py runserver 0.0.0.0:7777
 - Open: `http://127.0.0.1:7777`
 - Select your District, Thana, Specialization, and Fee limit
 - Click "Get Recommendations" to see AI-ranked doctors
+- Initial display shows 4 doctors; click "See More" to view all results
+- All pagination logic handled server-side by Django
 
 **📡 API Endpoint (Developers)**
 - Base URL: `http://127.0.0.1:7777/api/`
@@ -511,83 +514,214 @@ def get_doctors(district, thana, specialization, max_fee):
 result = get_doctors("Dhaka", "Dhanmondi", "Cardiology", 2000)
 ```
 
-### JavaScript/Node.js Client
+### Django Backend Integration
 
-**Browser Fetch Example:**
-```javascript
-async function getDoctorRecommendations() {
-  const payload = {
-    district: "Dhaka",
-    thana: "Dhanmondi",
-    specialization: "Cardiology",
-    max_fee: 2000,
-    online: 1,
-    emergency: 0,
-    top_n: 5
-  };
+**Django View Example:**
+```python
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+import requests
 
-  try {
-    const response = await fetch('http://127.0.0.1:7777/api/recommendations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+@require_http_methods(["GET", "POST"])
+def get_recommendations_view(request):
+    """Django view to get doctor recommendations"""
+    if request.method == 'POST':
+        try:
+            # Get parameters from form or JSON
+            district = request.POST.get('district') or request.JSON.get('district')
+            thana = request.POST.get('thana') or request.JSON.get('thana')
+            specialization = request.POST.get('specialization') or request.JSON.get('specialization')
+            max_fee = int(request.POST.get('max_fee', 0))
+            online = int(request.POST.get('online', 0))
+            emergency = int(request.POST.get('emergency', 0))
+            top_n = int(request.POST.get('top_n', 5))
 
-    const data = await response.json();
+            # Prepare payload
+            payload = {
+                "district": district,
+                "thana": thana,
+                "specialization": specialization,
+                "max_fee": max_fee,
+                "online": online,
+                "emergency": emergency,
+                "top_n": top_n
+            }
+
+            # Make internal API call
+            response = requests.post(
+                'http://127.0.0.1:7777/api/recommendations',
+                json=payload,
+                timeout=5
+            )
+            response.raise_for_status()
+            
+            data = response.json()
+            return JsonResponse(data)
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({
+                "success": False,
+                "error": f"API Error: {str(e)}"
+            }, status=500)
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "error": f"Error: {str(e)}"
+            }, status=400)
     
-    if (data.success) {
-      data.doctors.forEach(doctor => {
-        console.log(`${doctor.doctor_name} - Score: ${doctor.predicted_score.toFixed(4)}`);
-      });
-    } else {
-      console.error('Error:', data.error);
-    }
-  } catch (error) {
-    console.error('Network error:', error);
-  }
-}
-
-getDoctorRecommendations();
+    return JsonResponse({"error": "Use POST method"}, status=405)
 ```
 
-**Node.js Example:**
-```javascript
-const https = require('http');
+**Django Management Command Example:**
+```python
+# Create: yourapp/management/commands/fetch_doctors.py
 
-function getRecommendations(params) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify(params);
-    const options = {
-      hostname: '127.0.0.1',
-      port: 7777,
-      path: '/api/recommendations',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(data)
-      }
-    };
+from django.core.management.base import BaseCommand
+import requests
 
-    const req = https.request(options, (res) => {
-      let body = '';
-      res.on('data', chunk => body += chunk);
-      res.on('end', () => resolve(JSON.parse(body)));
+class Command(BaseCommand):
+    help = 'Fetch doctor recommendations from the API'
+
+    def add_arguments(self, parser):
+        parser.add_argument('--district', type=str, required=True)
+        parser.add_argument('--thana', type=str, required=True)
+        parser.add_argument('--specialization', type=str, required=True)
+        parser.add_argument('--max-fee', type=int, default=5000)
+        parser.add_argument('--top-n', type=int, default=5)
+
+    def handle(self, *args, **options):
+        payload = {
+            "district": options['district'],
+            "thana": options['thana'],
+            "specialization": options['specialization'],
+            "max_fee": options['max_fee'],
+            "top_n": options['top_n']
+        }
+
+        try:
+            response = requests.post(
+                'http://127.0.0.1:7777/api/recommendations',
+                json=payload,
+                timeout=5
+            )
+            data = response.json()
+
+            if data['success']:
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"✓ Found {data['count']} doctors"
+                    )
+                )
+                for doctor in data['doctors']:
+                    self.stdout.write(
+                        f"  • {doctor['doctor_name']} "
+                        f"({doctor['specialization']}) - "
+                        f"Score: {doctor['predicted_score']:.4f}"
+                    )
+            else:
+                self.stdout.write(
+                    self.style.ERROR(f"Error: {data['error']}")
+                )
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR(f"API Error: {str(e)}")
+            )
+```
+
+**Usage:**
+```bash
+python manage.py fetch_doctors --district "Dhaka" --thana "Dhanmondi" --specialization "Cardiology" --max-fee 2000
+```
+
+**Django Template with AJAX (Server-side rendering):**
+```html
+<!-- doctors.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<form id="doctorForm" method="post" action="{% url 'get_recommendations' %}">
+    {% csrf_token %}
+    
+    <select name="district" required>
+        {% for d in districts %}
+            <option value="{{ d }}">{{ d }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Get Recommendations</button>
+</form>
+
+<div id="results"></div>
+
+<script>
+document.getElementById('doctorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('{% url "get_recommendations" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        let html = '';
+        if (data.success) {
+            data.doctors.forEach(doc => {
+                html += `<div class="doctor-card">
+                    <h3>${doc.doctor_name}</h3>
+                    <p>Score: ${doc.predicted_score.toFixed(4)}</p>
+                </div>`;
+            });
+        } else {
+            html = `<p>Error: ${data.error}</p>`;
+        }
+        document.getElementById('results').innerHTML = html;
     });
+});
+</script>
+{% endblock %}
+```
 
-    req.on('error', reject);
-    req.write(data);
-    req.end();
-  });
-}
+**Django Serializer with DRF (Django REST Framework):**
+```python
+from rest_framework import serializers
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import requests
 
-// Usage
-getRecommendations({
-  district: "Dhaka",
-  thana: "Dhanmondi",
-  specialization: "Cardiology",
-  max_fee: 2000,
-  top_n: 5
-}).then(data => console.log(data.doctors));
+class DoctorRecommendationSerializer(serializers.Serializer):
+    district = serializers.CharField(required=True)
+    thana = serializers.CharField(required=True)
+    specialization = serializers.CharField(required=True)
+    max_fee = serializers.IntegerField(required=True)
+    online = serializers.IntegerField(default=0)
+    emergency = serializers.IntegerField(default=0)
+    top_n = serializers.IntegerField(default=5)
+
+@api_view(['POST'])
+def doctor_recommendations(request):
+    """DRF endpoint for doctor recommendations"""
+    serializer = DoctorRecommendationSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        try:
+            response = requests.post(
+                'http://127.0.0.1:7777/api/recommendations',
+                json=serializer.validated_data,
+                timeout=5
+            )
+            return Response(response.json())
+        except requests.exceptions.RequestException as e:
+            return Response(
+                {"success": False, "error": str(e)},
+                status=500
+            )
+    
+    return Response(serializer.errors, status=400)
 ```
 
 ### cURL Command Line
@@ -636,10 +770,11 @@ Carefully selected modern technologies for production reliability and performanc
 ### Frontend
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
-| **Template Engine** | Django Templates | Server-side HTML rendering |
+| **Template Engine** | Django Templates | Server-side HTML rendering with context variables |
 | **Markup** | HTML 5 | Semantic web structure |
 | **Styling** | CSS 3 | Responsive, mobile-friendly UI |
-| **Architecture** | MVC Pattern | Clean separation of concerns |
+| **Pagination** | Django Backend | Server-side "See More" pagination (no JavaScript) |
+| **Architecture** | MVT (Model-View-Template) | Clean separation of UI and business logic |
 
 ### Development & DevOps
 | Component | Technology | Purpose |

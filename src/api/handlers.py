@@ -25,7 +25,7 @@ warnings.filterwarnings('ignore')
 
 @require_http_methods(['GET', 'POST'])
 def home(request):
-    """Serve main doctor search page"""
+    """Serve main doctor search page with Django-based pagination"""
     options = get_options_data()
     
     selected_district = request.POST.get('district') or (options['districts'][0] if options['districts'] else '')
@@ -45,6 +45,10 @@ def home(request):
     online = request.POST.get('online') == 'on'
     emergency = request.POST.get('emergency') == 'on'
     top_n = None
+    
+    # Django pagination control
+    show_all = request.POST.get('show_all') == 'true'
+    initial_display = 4  # Show 4 doctors by default
 
     context = {
         'districts': options['districts'],
@@ -60,6 +64,8 @@ def home(request):
         'searched': False,
         'error': '',
         'doctors': [],
+        'displayed_doctors': [],  # Limited set for initial display
+        'show_see_more_btn': False,  # Show "See More" button
     }
 
     if request.method == 'POST':
@@ -79,7 +85,18 @@ def home(request):
             }
             result = get_recommendations(payload, top_n)
             if result.get('success'):
-                context['doctors'] = result['doctors']
+                all_doctors = result['doctors']
+                context['doctors'] = all_doctors
+                
+                # Django-based pagination logic
+                if show_all:
+                    # Show all doctors
+                    context['displayed_doctors'] = all_doctors
+                    context['show_see_more_btn'] = False
+                else:
+                    # Show only first 4 doctors, display "See More" button if more exist
+                    context['displayed_doctors'] = all_doctors[:initial_display]
+                    context['show_see_more_btn'] = len(all_doctors) > initial_display
             else:
                 context['error'] = result.get('message') or result.get('error') or 'No doctors found'
         except Exception as exc:
@@ -92,12 +109,6 @@ def home(request):
 def style_css(request):
     """Serve CSS stylesheet"""
     return FileResponse(open(DEMO_UI_DIR / 'style.css', 'rb'), content_type='text/css')
-
-
-@require_GET
-def script_js(request):
-    """Serve JavaScript file"""
-    return FileResponse(open(DEMO_UI_DIR / 'script.js', 'rb'), content_type='application/javascript')
 
 
 # ============================================================================
