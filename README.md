@@ -1031,7 +1031,6 @@ requests==2.31.0
 **Contact Information:**
 - **Project Mentor:** [Nusrat Jahan](https://github.com/Nusrat-96)
 - **Email:** [nusrat.adiba@gmail.com](mailto:nusrat.adiba@gmail.com)
-- **Platform:** [Dr.Seba Healthcare](https://www.drseba.com)
 
 ---
 
@@ -1039,5 +1038,5 @@ requests==2.31.0
 
 This project was developed as part of professional data science training with mentorship from Nusrat Jahan.
 
-**Made with ❤️ by the Dr.Seba Development Team**  
+**Made with ❤️ by the Dr.Seba**  
 📅 *Last Updated: April 2026*  
