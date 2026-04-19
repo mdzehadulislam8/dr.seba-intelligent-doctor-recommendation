@@ -2,6 +2,8 @@
 
 > **Finding the right doctor shouldn't be a guessing game.** This intelligent ML platform helps patients discover the most suitable healthcare providers within their proximity, combining proximity, expertise, ratings, and service availability into one seamless experience.
 
+Developed by the Data Science Team during an internship program for the Dr.Seba healthcare platform.
+
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.0-green.svg)](https://www.djangoproject.com/)
 [![CatBoost](https://img.shields.io/badge/CatBoost-99.63%25%20R²-orange.svg)](https://catboost.ai/)
@@ -463,6 +465,8 @@ curl -X POST http://127.0.0.1:7777/api/recommendations \
 | **Model Inference** | <100ms | ~40-80ms | 🚀 Real-time |
 | **Model Load** | <2s | ~300-500ms | ✅ Fast |
 
+Performance note: Metrics are observed from local test runs on development hardware using the Django API endpoints with warmed model cache.
+
 ### Model Performance
 
 | Metric | Value |
@@ -508,6 +512,8 @@ This system was developed as part of a professional **data science internship pr
 - **Full-Stack Development** — Backend, frontend, deployment considerations
 - **Healthcare Domain Knowledge** — Practical understanding of doctor-patient matching
 
+This project work was completed by the internship Data Science Team under mentor guidance.
+
 ### Project Leadership
 
 **Mentor & Project Direction:** [Nusrat Jahan](https://github.com/Nusrat-96)
@@ -517,7 +523,7 @@ This system was developed as part of a professional **data science internship pr
 
 ---
 
-## 📞 Support & Contact
+## Support & Contact
 
 **Questions or Issues?**
 - 🔧 **Setup and Run Help** → Follow the Quick Start Guide in this README
@@ -529,6 +535,8 @@ This system was developed as part of a professional **data science internship pr
 ## 📜 License & Attribution
 
 This project was developed with mentorship and guidance from [Nusrat Jahan](https://github.com/Nusrat-96) as part of the Dr.Seba Healthcare Platform initiative.
+
+Implementation and experimentation were carried out by the Data Science Team during the internship period.
 
 **Made with ❤️ for better healthcare accessibility in Bangladesh**
 
