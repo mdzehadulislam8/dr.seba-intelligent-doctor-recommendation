@@ -163,6 +163,35 @@ The system is built on **verified, quality data**:
 
 ---
 
+## 🎨 User Interface Preview
+
+### Input Page — Search Criteria
+![Input Interface](https://drive.google.com/uc?export=view&id=1OVoBvt2csRNjh2RqzHcuzMvtI9NjpcpE)
+
+**Features displayed:**
+- 📍 District dropdown selection
+- 🏘️ Thana/Area selection (dynamic based on district)
+- 👨‍⚕️ Medical Specialization choice (30+ options)
+- 💳 Maximum Consultation Fee input
+- 💻 Online Consultation checkbox
+- 🚨 Emergency Service checkbox
+- 🔍 Search button to get recommendations
+
+### Output Page — Doctor Recommendations
+![Output Results](https://drive.google.com/uc?export=view&id=1KD2jkHPG8esA16JSQ3nH67Cn0HHeXueZ)
+
+**Displayed for each recommended doctor:**
+- ✅ Doctor name and specialization
+- ⭐ Average rating (1-5 stars)
+- 📅 Years of experience
+- 💰 Consultation fee in BDT (৳)
+- 🤖 AI Quality Score (predicted by CatBoost)
+- 🏥 Hospital name and location
+- 📍 Full address
+- Quality badge: "Excellent" / "Good" / "Fair" (based on AI prediction)
+
+---
+
 ## 📁 Project Structure
 
 ```
