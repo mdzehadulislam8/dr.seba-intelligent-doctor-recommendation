@@ -7,6 +7,21 @@
 [![CatBoost](https://img.shields.io/badge/CatBoost-99.63%25%20R²-orange.svg)](https://catboost.ai/)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](#-quick-start-guide)
 
+## Table of Contents
+
+- [The Problem](#-the-problem)
+- [Key Capabilities](#-key-capabilities)
+- [Technology Stack](#-technology-stack)
+- [Machine Learning Excellence](#-machine-learning-excellence)
+- [Dataset Foundation](#-dataset-foundation)
+- [Architecture Overview](#-architecture-overview)
+- [Product Walkthrough (Input and Output)](#-product-walkthrough-input-and-output)
+- [Project Structure](#-project-structure)
+- [Quick Start Guide](#-quick-start-guide)
+- [API Documentation](#-api-documentation)
+- [Performance and Reliability](#-performance--reliability)
+- [Security](#-security)
+
 ---
 
 ## 🎯 The Problem
@@ -163,32 +178,38 @@ The system is built on **verified, quality data**:
 
 ---
 
-## 🎨 User Interface Preview
+## 🖼️ Product Walkthrough (Input and Output)
 
-### Input Page — Search Criteria
+The following screenshots show the full patient journey from search criteria submission to AI-ranked recommendation results.
+
+### 1. Input Screen: Search Criteria
+
 ![Input Interface](https://drive.google.com/uc?export=view&id=1OVoBvt2csRNjh2RqzHcuzMvtI9NjpcpE)
 
-**Features displayed:**
-- 📍 District dropdown selection
-- 🏘️ Thana/Area selection (dynamic based on district)
-- 👨‍⚕️ Medical Specialization choice (30+ options)
-- 💳 Maximum Consultation Fee input
-- 💻 Online Consultation checkbox
-- 🚨 Emergency Service checkbox
-- 🔍 Search button to get recommendations
+Users provide:
+- District and thana/area
+- Required medical specialization
+- Maximum consultation fee
+- Optional online consultation requirement
+- Optional emergency service requirement
 
-### Output Page — Doctor Recommendations
+### 2. Output Screen: Ranked Doctor Recommendations
+
 ![Output Results](https://drive.google.com/uc?export=view&id=1KD2jkHPG8esA16JSQ3nH67Cn0HHeXueZ)
 
-**Displayed for each recommended doctor:**
-- ✅ Doctor name and specialization
-- ⭐ Average rating (1-5 stars)
-- 📅 Years of experience
-- 💰 Consultation fee in BDT (৳)
-- 🤖 AI Quality Score (predicted by CatBoost)
-- 🏥 Hospital name and location
-- 📍 Full address
-- Quality badge: "Excellent" / "Good" / "Fair" (based on AI prediction)
+The system returns:
+- Ranked doctor list based on AI predicted score
+- Doctor profile summary (name, specialization, experience, rating)
+- Consultation fee and hospital details
+- Full location address
+- Quality badge (Excellent, Good, Fair)
+
+### What This Demonstrates
+
+- End-to-end recommendation flow is fully functional
+- Real-time filtering and ranking based on user constraints
+- Clean and intuitive user experience suitable for production
+- Presentation-ready interface for academic and stakeholder demos
 
 ---
 
@@ -371,7 +392,7 @@ Content-Type: application/json
 }
 ```
 
-For complete API documentation, see [DEVELOPER_API_GUIDE.md](DEVELOPER_API_GUIDE.md).
+All API usage details are documented in this README under the API Documentation section.
 
 ---
 
@@ -473,8 +494,6 @@ curl -X POST http://127.0.0.1:7777/api/recommendations \
 
 ## 📚 Documentation
 
-- [**DEVELOPER_API_GUIDE.md**](DEVELOPER_API_GUIDE.md) — Complete API reference with advanced examples
-- [**HOW_TO_RUN.md**](HOW_TO_RUN.md) — Troubleshooting and setup variations
 - [**DATA_DICTIONARY.md**](DATA_DICTIONARY.md) — Dataset documentation and quality metrics
 - **Jupyter Notebook** — See the ML pipeline in action: `notebook/dr.seba_doctor_recommendation_training.ipynb`
 
@@ -501,8 +520,8 @@ This system was developed as part of a professional **data science internship pr
 ## 📞 Support & Contact
 
 **Questions or Issues?**
-- 🔧 **Setup Help** → See [HOW_TO_RUN.md](HOW_TO_RUN.md)
-- 📖 **API Questions** → See [DEVELOPER_API_GUIDE.md](DEVELOPER_API_GUIDE.md)
+- 🔧 **Setup and Run Help** → Follow the Quick Start Guide in this README
+- 📖 **API Questions** → Refer to the API Documentation section in this README
 - 💬 **Project Discussions** → Contact Nusrat Jahan
 
 ---
@@ -515,4 +534,4 @@ This project was developed with mentorship and guidance from [Nusrat Jahan](http
 
 ---
 
-*Last Updated: April 2026 | Status: Production Ready ✅*
+*Last Updated: April 2026*
